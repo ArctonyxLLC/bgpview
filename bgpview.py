@@ -2,14 +2,16 @@
 from argparse import ArgumentParser
 import json
 import sys
+import typing
 import requests
 
 BASE_URL = 'https://api.bgpview.io'
 
 class BgpView(object):
 
-    def __init__(self):
+    def __init__(self, response_data: typing.Union[None, dict]=None):
         self.error = False
+        self.response_data = response_data or {}
 
     def __repr__(self):
         return self.json
@@ -40,10 +42,13 @@ class BgpView(object):
         raise NotImplementedError('subclass must implement this')
 
 class Search(BgpView):
-    def __init__(self, term):
+    def __init__(self, term, response_data: typing.Union[None, dict]=None):
+        super().__init__(response_data)
+
         self.endpoint = 'search'
         self.query_term = term
-        self.query()
+        if not self.response_data:
+            self.query()
 
     def query(self):
         # need to override the base class in this case because the API is different
@@ -76,9 +81,12 @@ class Search(BgpView):
 
 class ASN(BgpView):
 
-    def __init__(self, asn):
+    def __init__(self, asn, response_data: typing.Union[None, dict]=None):
+        super().__init__(response_data)
+
         self.endpoint = 'asn'
-        self.query(self.endpoint, asn)
+        if not self.response_data:
+            self.query(self.endpoint, asn)
 
     @property
     def asn(self):
@@ -114,9 +122,12 @@ class ASN(BgpView):
 
 class Prefixes(BgpView):
 
-    def __init__(self, asn):
+    def __init__(self, asn, response_data: typing.Union[None, dict]=None):
+        super().__init__(response_data)
+
         self.endpoint = 'asn'
-        self.query(self.endpoint, ('{}/prefixes').format(asn))
+        if not self.response_data:
+            self.query(self.endpoint, ('{}/prefixes').format(asn))
 
     @property
     def prefixes(self):
@@ -146,9 +157,12 @@ class Prefixes(BgpView):
         return self.prefixes
 
 class Peers(BgpView):
-    def __init__(self, asn):
+    def __init__(self, asn, response_data: typing.Union[None, dict]=None):
+        super().__init__(response_data)
+
         self.endpoint = 'asn'
-        self.query(self.endpoint, ('{}/peers').format(asn))
+        if not self.response_data:
+            self.query(self.endpoint, ('{}/peers').format(asn))
 
     @property
     def peers(self):
@@ -175,9 +189,13 @@ class Peers(BgpView):
         return self.peers
 
 class Upstreams(BgpView):
-    def __init__(self, asn):
+    def __init__(self, asn, response_data: typing.Union[None, dict]=None):
+        super().__init__(response_data)
+
         self.endpoint = 'asn'
-        self.query(self.endpoint, ('{}/upstreams').format(asn))
+
+        if not self.response_data:
+            self.query(self.endpoint, ('{}/upstreams').format(asn))
 
     @property
     def upstreams(self):
@@ -204,9 +222,13 @@ class Upstreams(BgpView):
         return self.upstreams
 
 class Downstreams(BgpView):
-    def __init__(self, asn):
+    def __init__(self, asn, response_data: typing.Union[None, dict]=None):
+        super().__init__(response_data)
+
         self.endpoint = 'asn'
-        self.query(self.endpoint, ('{}/downstreams').format(asn))
+
+        if not self.response_data:
+            self.query(self.endpoint, ('{}/downstreams').format(asn))
 
     @property
     def downstreams(self):
@@ -233,9 +255,12 @@ class Downstreams(BgpView):
         return self.downstreams
 
 class IX(BgpView):
-    def __init__(self, asn):
+    def __init__(self, asn, response_data: typing.Union[None, dict]=None):
+        super().__init__(response_data)
+
         self.endpoint = 'asn'
-        self.query(self.endpoint, ('{}/ixs').format(asn))
+        if not self.response_data:
+            self.query(self.endpoint, ('{}/ixs').format(asn))
 
     @property
     def ixs(self):
@@ -262,9 +287,12 @@ class IX(BgpView):
         return self.ixs
 
 class IP(BgpView):
-    def __init__(self, ip):
+    def __init__(self, ip, response_data: typing.Union[None, dict]=None):
+        super().__init__(response_data)
+
         self.endpoint = 'ip'
-        self.query(self.endpoint, ('{}').format(ip))
+        if not self.response_data:
+            self.query(self.endpoint, ('{}').format(ip))
 
     @property
     def asn(self):
